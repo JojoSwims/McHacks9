@@ -3,14 +3,45 @@
 import requests
 
 
-
+	
 
 q = input("enter a query: ")
-sortBy = input ("popularity or time?: ")
+sortBy = input ("sort by popularity or time?: ")
 
+
+def parseQuery(q):
+
+	result = []
+	acc = ""
+	for char in q:
+		if char == ',':
+			result.append(acc)
+			acc = ""
+		else:
+			acc += char
+	
+	result.append(acc)
+	
+	return result
+
+
+
+def requestQuery():
+
+	queryVector = parseQuery(q)
+
+	myString = ""
+	
+	for i in range(len(queryVector)):
+		myString+= "q=" + queryVector[i] + "&" 
+
+	return myString
+
+print(requestQuery())
+print("\n\n")
 
 url = ("https://newsapi.org/v2/everything?" + 
-	"q="+q + "&" +  
+	requestQuery() +  
 	
 	"sortBy=" + sortBy + "&"
 
@@ -29,7 +60,7 @@ url2 = ('https://newsapi.org/v2/everything?'
 
 response = requests.get(url).json()
 
-
+length = response.get("totalResults")
 articles = response.get("articles")
 
 # an article has source(which is a dictionary with keys id and name), author, title, description, url, urlToImage, publishedAt, content(this is really big)
@@ -38,8 +69,14 @@ articles = response.get("articles")
 
 
 def printNice(aList): # with new lines added for clairty for large data sets
+
+	i = 1
 	for element in aList:
+	
+		print(i)
 		print(element)
+		print("\n")
+		i+= 1
 
 
 def parseTime (date):
@@ -91,13 +128,46 @@ def getRank(articles, rankBy, objOfInterest):
 		return -1 		# object was not in the list
 
 
+def tupleUp(articles): # this tuple returns the (title, date, url) triple we talked about
+	
+	result = []
+		
+	title = getInfo(articles, "title")
+	date = getInfo(articles, "publishedAt")
+	url = getInfo(articles, "url")
+
+	for i in range(len(articles)):
+		result.append((title[i], date[i], url[i]))
+
+	return result
+
+
+def generalTupleUp (articles):	# outputs the full 8-tuple
+
+	result = []
+
+	title = getInfo(articles, "title")
+	date = getInfo(articles, "publishedAt")
+	url = getInfo(articles, "url")
+	
+	source = getInfo(articles, "source")
+	author = getInfo(articles, "author")
+	description = getInfo(articles, "description")
+	urlToImage = getInfo(articles, "urlToImage")
+	content = getInfo(articles, "content")
+
+	for i in range(len(articles)):
+		result.append((title[i], date[i], url[i], source[i], author[i], description[i], urlToImage[i], content[i]))
+
+	return result
 
 
 
-printNice (getInfo(articles, "source"))
+
+printNice(tupleUp(articles))
 
 
-print(getRank(articles, "title", " Kazakhstan Descends into Chaos, Crypto Miners Are at a Loss"))
+
 
 
 
