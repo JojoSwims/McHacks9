@@ -2,7 +2,7 @@
 
 import requests
 
-EARLIEST_DATE = 'from=2020-01-01&'
+EARLIEST_DATE = 'from=2021-12-22&'
 q = input("enter a query: ")
 sortBy = input("sort by popularity or time?: ")
 
@@ -14,15 +14,9 @@ def query(q):
             acc += "&"
         else:
             acc += char
-    return 'q='+acc
+    return acc
 
-
-url = ('https://newsapi.org/v2/everything?',
-       query(),
-       EARLIEST_DATE,
-       'sortBy=' + sortBy + '&',
-       'apiKey=06fa07b7b84a486699e92bc6af7a9c45'
-       )
+url = 'https://newsapi.org/v2/everything?'+'q='+query(q)+'&'+EARLIEST_DATE+'sortBy='+sortBy +'&'+'apiKey=06fa07b7b84a486699e92bc6af7a9c45'
 
 
 # url2 is a model for url
@@ -30,22 +24,19 @@ url2 = ('https://newsapi.org/v2/everything?'
         'q=Apple&'
         'from=2022-01-22&'
         'sortBy=popularity&'
-        'apiKey=06fa07b7b84a486699e92bc6af7a9c45')
-
+        'apiKey=87633b4890da4b9595d99f116a01330b')
 
 response = requests.get(url).json()
 
+print(response)
 length = response.get("totalResults")
 articles = response.get("articles")
 
 # an article has source(which is a dictionary with keys id and name), author, title, description, url, urlToImage, publishedAt, content(this is really big)
 
-
 def printNice(aList):  # with new lines added for clairty for large data sets
-
     i = 1
     for element in aList:
-
         print(i)
         print(element)
         print("\n")
