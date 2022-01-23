@@ -1,7 +1,10 @@
+#!/usr/bin/env python3
+
 from get_reactions import *
 import plotly.express as px
 import pandas as pd
 
+#Note that in the future, we will have to replace dataframe.append() with panda.concatenate()
 #We will plot the data from most reactions to least reactions, so we need to sort the subreddits in that way:
 
 def mergeSort(keys):
@@ -55,11 +58,21 @@ for sub in subreddits:
         'subreddit': sub,
         'reactions': data[sub][0],
         'reaction sentiment':color}, ignore_index=True)
+
+
+
 print(df)
 fig = px.bar(df, x="reactions", y="subreddit", color='reaction sentiment', orientation='h',
-             height=len(subreddits)*100,
-             title='Reactions and feelings to the event ')
-fig.update_layout(xaxis={'categoryorder':'max descending'})
+		
+		color_discrete_sequence=["grey", "red", "light green"],
+
+		height=len(subreddits)*100,
+		title='Reactions and feelings to the event ')
+
+fig.update_layout(yaxis = { "categoryorder": "max ascending"})
+#fig.update_layout(xaxis={'categoryorder':'max descending'})
+
+
 
 fig.show()
 """"
