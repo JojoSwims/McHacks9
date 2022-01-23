@@ -1,5 +1,6 @@
 from get_reactions import *
-import plotly.graph_objects as go
+import plotly.express as px
+import pandas as pd
 
 #We will plot the data from most reactions to least reactions, so we need to sort the subreddits in that way:
 
@@ -35,13 +36,36 @@ def merge(lst1, lst2):
 
 data=get_reactions_dic()
 subreddits=mergeSort(list(data.keys()))
+
+"""
 react_values=[]
 for sub in subreddits:
     react_values.append(data[sub][0])
+"""
+print(subreddits)
+df=pd.DataFrame()
+for sub in subreddits:
+    if(data[sub][1]=='N/A'):
+        color='neutral'
+    elif(data[sub][1]>0.5):
+        color='positive'
+    else:
+        color='negative'
+    df=df.append({
+        'subreddit': sub,
+        'reactions': data[sub][0],
+        'reaction sentiment':color}, ignore_index=True)
+print(df)
+fig = px.bar(df, x="reactions", y="subreddit", color='reaction sentiment', orientation='h',
+             height=len(subreddits)*100,
+             title='Reactions and feelings to the event ')
+fig.update_layout(xaxis={'categoryorder':'max descending'})
 
-
+fig.show()
+""""
 fig = go.Figure(go.Bar(
             x=react_values,
             y=subreddits,
             orientation='h'))
 fig.show()
+"""
